@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il mio set è pronto?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #f7f5f0;
+    color: #1a1a1a;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: #2d5a1b;
+    color: #e8f5e0;
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: normal;
+    line-height: 1.25;
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+  }
+
+  .subtitle {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+    border-left: 3px solid #c8d8b8;
+    padding-left: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .group {
+    margin-bottom: 1.5rem;
+  }
+
+  .group-label {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #e0ddd6;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0.65rem 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 3px;
+    border: 1px solid transparent;
+    user-select: none;
+  }
+
+  .item:hover {
+    background: #eeeae2;
+  }
+
+  .item.ok {
+    background: #edf5e7;
+    border-color: #b8d8a0;
+  }
+
+  .item.problem {
+    background: #fdf0ee;
+    border-color: #f0b8b0;
+  }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: white;
+  }
+
+  .item.ok .checkbox {
+    background: #2d5a1b;
+    border-color: #2d5a1b;
+  }
+
+  .item.problem .checkbox {
+    background: #b03020;
+    border-color: #b03020;
+  }
+
+  .tick {
+    display: none;
+    width: 10px;
+    height: 10px;
+  }
+
+  .item.ok .tick, .item.problem .tick {
+    display: block;
+  }
+
+  .item-body { flex: 1; }
+
+  .item-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1a1a1a;
+  }
+
+  .item.ok .item-text { color: #1a3a0a; }
+  .item.problem .item-text { color: #6a1a0a; }
+
+  .item-feedback {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.45;
+    display: none;
+  }
+
+  .item.ok .item-feedback {
+    display: block;
+    color: #2d5a1b;
+  }
+
+  .item.problem .item-feedback {
+    display: block;
+    color: #8a2010;
+  }
+
+  .hint {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #999;
+    margin-top: 3px;
+  }
+
+  .score-section {
+    background: white;
+    border: 1px solid #e0ddd6;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .score-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .score-num {
+    font-size: 28px;
+    font-weight: normal;
+    color: #1a1a1a;
+  }
+
+  .score-denom {
+    font-size: 14px;
+    color: #888;
+    margin-left: 3px;
+  }
+
+  .score-pct {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #888;
+  }
+
+  .track {
+    height: 5px;
+    background: #e8e5de;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .fill {
+    height: 100%;
+    border-radius: 3px;
+    background: #2d5a1b;
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+
+  .score-msg {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #444;
+  }
+
+  .note-section {
+    margin-top: 1.5rem;
+    background: white;
+    border: 1px solid #e0ddd6;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .note-label {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.65rem 0.75rem;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #333;
+    background: #fafaf8;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: #2d5a1b;
+    background: white;
+  }
+
+  textarea::placeholder { color: #bbb; }
+
+  .footer-note {
+    margin-top: 1.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #999;
+    line-height: 1.5;
+    border-left: 3px solid #e0ddd6;
+    padding-left: 0.75rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="tag">Do · Attività 2</div>
+    <h1>Il mio set è pronto?</h1>
+    <p class="subtitle">
+      Alzati, vai alla tua scrivania e allestisci il set mentre spunti ogni voce.<br>
+      Un clic = risolto &nbsp;·&nbsp; Due clic = problema da notare &nbsp;·&nbsp; Tre clic = azzera
+    </p>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Luce</div>
+
+    <div class="item" data-id="1" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Ho trovato una posizione con la finestra davanti o di lato</div>
+        <div class="item-feedback ok-msg">Ottimo — la luce naturale fa già metà del lavoro.</div>
+        <div class="item-feedback prob-msg">Prova a spostare la scrivania o a girare verso la finestra più vicina.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="2" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Ho fatto una prova da 3 secondi: il viso è ben illuminato</div>
+        <div class="item-feedback ok-msg">Perfetto — il viso illuminato è la prima cosa che si nota.</div>
+        <div class="item-feedback prob-msg">Aggiusta la posizione finché il viso non risulta chiaro nella prova.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Inquadratura</div>
+
+    <div class="item" data-id="3" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Il telefono è in verticale (9:16)</div>
+        <div class="item-feedback ok-msg">Bene — il formato verticale è quello giusto per tutti i social.</div>
+        <div class="item-feedback prob-msg">Ruota il telefono: 9:16 è l'unico formato che funziona su Instagram e Facebook.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="4" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Il telefono è appoggiato su un supporto stabile (libri, portapenne…)</div>
+        <div class="item-feedback ok-msg">Ottimo — la stabilità comunica professionalità.</div>
+        <div class="item-feedback prob-msg">Usa libri, un portapenne o qualsiasi oggetto solido. Un telefono tremolante distrae.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="5" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">L'obiettivo è all'altezza dei miei occhi</div>
+        <div class="item-feedback ok-msg">Perfetto — l'altezza degli occhi crea contatto diretto con chi guarda.</div>
+        <div class="item-feedback prob-msg">Alza il supporto finché l'obiettivo non è alla stessa altezza dei tuoi occhi.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="6" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Il viso è nel terzo superiore dell'immagine, con spazio sopra la testa</div>
+        <div class="item-feedback ok-msg">Bene — l'inquadratura rispetta la regola dei terzi.</div>
+        <div class="item-feedback prob-msg">Abbassa leggermente il telefono finché il viso non sale nel terzo superiore.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">Audio e linguaggio del corpo</div>
+
+    <div class="item" data-id="7" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Ho chiuso la porta e avvisato i colleghi</div>
+        <div class="item-feedback ok-msg">Ottimo — l'audio pulito vale quanto l'immagine.</div>
+        <div class="item-feedback prob-msg">Se non puoi chiudere la porta, scegli l'orario più silenzioso della giornata.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="8" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Ho fatto una prova audio da 10 secondi: voce chiara, nessun rimbombo</div>
+        <div class="item-feedback ok-msg">Bene — l'audio è a posto.</div>
+        <div class="item-feedback prob-msg">Se senti rimbombo, avvicina il microfono o usa un lavalier da pochi euro.</div>
+      </div>
+    </div>
+
+    <div class="item" data-id="9" onclick="toggle(this)">
+      <div class="checkbox">
+        <svg class="tick" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5L4 7.5L8.5 2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-body">
+        <div class="item-text">Schiena dritta, mani visibili e aperte (non conserte)</div>
+        <div class="item-feedback ok-msg">Ottimo — il linguaggio del corpo aperto invita le persone ad ascoltare.</div>
+        <div class="item-feedback prob-msg">Prova a tenere le mani sul tavolo, visibili: è già sufficiente per sembrare aperti.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-section">
+    <div class="score-top">
+      <div>
+        <span class="score-num" id="score-num">0</span>
+        <span class="score-denom">/ 9 voci verificate</span>
+      </div>
+      <span class="score-pct" id="score-pct">0%</span>
+    </div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="score-msg" id="score-msg">Inizia spuntando le voci qui sopra.</div>
+  </div>
+
+  <div class="note-section">
+    <label class="note-label" for="note">Problemi da segnalare al tutor</label>
+    <textarea id="note" placeholder="Se qualche voce non è risolvibile nel tuo ufficio (es. nessuna finestra), annotalo qui. Ne parleremo insieme nella sessione sincrona."></textarea>
+  </div>
+
+  <p class="footer-note">
+    Attività 2 di 3 &nbsp;·&nbsp; Modulo 3 — Ciak, si gira!<br>
+    Quando tutte le voci sono spuntate, sei pronto per l'Attività 3: girare il video.
+  </p>
+
+</div>
+
+<script>
+  var states = {};
+  var total = 9;
+
+  var messages = [
+    'Inizia spuntando le voci qui sopra.',
+    'Stai allestendo il set — continua.',
+    'Stai andando bene.',
+    'Quasi tutto a posto!',
+    'Set completo. Sei pronto a girare.'
+  ];
+
+  function toggle(el) {
+    var id = el.getAttribute('data-id');
+    var s = states[id] || 0;
+    s = (s + 1) % 3;
+    states[id] = s;
+
+    el.classList.remove('ok', 'problem');
+    var okMsg = el.querySelector('.ok-msg');
+    var probMsg = el.querySelector('.prob-msg');
+    okMsg.style.display = 'none';
+    probMsg.style.display = 'none';
+
+    if (s === 1) {
+      el.classList.add('ok');
+      okMsg.style.display = 'block';
+    } else if (s === 2) {
+      el.classList.add('problem');
+      probMsg.style.display = 'block';
+    }
+
+    updateScore();
+  }
+
+  function updateScore() {
+    var done = 0;
+    for (var k in states) { if (states[k] === 1) done++; }
+    var pct = Math.round((done / total) * 100);
+    document.getElementById('score-num').textContent = done;
+    document.getElementById('score-pct').textContent = pct + '%';
+    document.getElementById('fill').style.width = pct + '%';
+
+    var idx = done === 0 ? 0 : done <= 3 ? 1 : done <= 5 ? 2 : done <= 8 ? 3 : 4;
+    document.getElementById('score-msg').textContent = messages[idx];
+
+    var fill = document.getElementById('fill');
+    if (done === total) fill.style.background = '#2d5a1b';
+    else if (done >= 6) fill.style.background = '#5a8a2b';
+    else fill.style.background = '#8a6a10';
+  }
+</script>
+</body>
+</html>
